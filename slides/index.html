@@ -55,6 +55,136 @@
         </ul>
     </section>
 
+    <section class="slide">
+        <h2>Защита десктопа vs защита Web?</h2>
+        <ul>
+            <li class="next">Проблема веба - взломщики</li>
+            <li class="next">Проблема десктопа - ?</li>
+        </ul>
+    </section>
+    <section class="slide">
+        <img class="cover" src="../pictures/slide4.jpeg">
+    </section>
+    <section class="slide">
+        <h2>Проблема десктопа - это Пираты</h2>
+        <h3>Меры защиты</h3>
+        <ul>
+            <li>Оффлайн лицензия</li>
+            <li>Сервера лицензирования</li>
+            <li>Аппаратная защита</li>
+            <li class="next">И это не помогает</li>
+        </ul>
+    </section>
+    <section class="slide">
+        <h2>Основные виды атак на веб-приложения</h2>
+        <ul>
+            <li>csrf</li>
+            <li>xss</li>
+            <li>htmlinj</li>
+            <li>cache poisoning</li>
+            <li>protocol smuggling</li>
+            <li>race condition</li>
+            <li>blind sqlinj</li>
+        </ul>
+    </section>
+
+    <section class="slide">
+        <img src="../pictures/anon.jpeg" class="cover">
+    </section>
+    <section class="slide">
+        <h2>Архитектура атак Anonymous. Месяц на всё.</h2>
+        <ul>
+            <li class="next">1. Набор участников и координация, подготовка соц.сетей</li>
+            <li class="next">2. Разведка и атака. Acunetix + Havij. Похищение и контрольный в голову. Даже Stratfor'у.</li>
+            <li class="next">3. Если п2 не удался - открываем огонь из loic'ов добровольцев. </li>
+        </ul>
+    </section>
+    <section class="slide">
+        <img src="../pictures/Fotoram.io.jpg" class="cover">
+    </section>
+    <section class="slide">
+        <h2>Перейдем к CSRF</h2>
+        <ul>
+            <li>Это далеко не самая интересная с технической точки зрения атака.</li>
+        </ul>
+    </section>
+    <section class="slide">
+        <h2>Подробнее про CSRF-атаку</h2>
+        <ul>
+            <li>CSRF (Сross Site Request Forgery) в переводе на русский — это подделка межсайтовых запросов</li>
+            <li>Рейтинг OWASP 2017 - CSRF не вошли в топ уязвимостей (за 2020 ещё не подсчитано) </li>
+            <li>Уязвимость, если есть - даёт Carte blanche на всё - от увода аккаунта до эксплойта админки ИМ</li>
+        </ul>
+    </section>
+    <section class="slide">
+        <h2>Кто успел пострадать в своё время?</h2>
+        <ul>
+            <li>YouTube</li>
+            <li>Badoo</li>
+            <li>Vimeo</li>
+            <li>КиноПоиск</li>
+            <li class="next">...</li>
+            <li class="next">Bitrix (16.5.4) (XSS + Csrf)</li>
+        </ul>
+    </section>
+    <section class="slide">
+        <h2>Архитектура CSRF-атаки</h2>
+        <ul>
+            <li class="next">Итак, нам понадобится</li>
+            <li class="next">Сайт, например соц.сеть и её страничка с настройками</li>
+            <li class="next">Сайт этот, конечно же, без проверок и аутентификаций.</li>
+            <li class="next">Подставная страничка от злоумышленника, с которой происходит атака.</li>
+        </ul>
+    </section>
+    <section class="slide">
+        <img src="../pictures/csrf.png" class="cover">
+    </section>
+    <section class="slide">
+        <h2>Архитектура CSRF-атаки</h2>
+        <ul>
+            <li class="next">Все данные пользователя с сайта А в браузере</li>
+            <li class="next">Поставляем на сайте Б форму с обработчиком</li>
+            <li class="next">Заманиваем юзера, после загрузки страницы отправляем её с нужным форматом</li>
+            <li class="next">Атака совершена, фиксируем профит</li>
+        </ul>
+    </section>
+    <section class="slide">
+        <h2>Защита от CSRF-атаки</h2>
+        <ul>
+            <li class="next"><b>CSRF-токен</b></li>
+            <li class="next">Генерируется высокоэнтропийный токен</li>
+            <li class="next">Он вставляется в DOM Html</li>
+            <li class="next">При каждом действии отправляется в параметре или заголовке</li>
+        </ul>
+    </section>
+    <section class="slide">
+        <h2>Защита от CSRF-атаки</h2>
+        <ul>
+            <li class="next"><b>Защита через content-type заголовок</b></li>
+            <li class="next">Пользователь должен отправить запрос с определенным заголовком Content-Type, например, application/json.</li>
+            <li class="next">В браузере через HTML форму или XHR API невозможно отправить произвольный Content-Type cross-origin</li>
+        </ul>
+    </section>
+    <section class="slide">
+        <h2>Защита от CSRF-атаки</h2>
+        <ul>
+            <li class="next"><b>SameSite cookie</b></li>
+            <li class="next">Ставим эту настройку для своих кук.</li>
+            <li class="next">Отправляем Cookie только на те запросы, которые получены первоначально с другого сайта.</li>
+        </ul>
+    </section>
+
+    <section class="slide">
+        <h2>А что с ajax?</h2>
+        <ul>
+            <li class="next"><b>X-CSRF-TOKEN</b></li>
+            <li class="next">При авторизации сервер устанавливает куку с именем CSRF-TOKEN, и пишет в неё токен.</li>
+            <li class="next">Код, осуществляющий XMLHttpRequest, получает куку и ставит заголовок X-CSRF-TOKEN с ней.</li>
+            <li class="next">Сервер проверяет, есть ли заголовок и содержит ли он правильный токен.</li>
+        </ul>
+    </section>
+
+
     <footer class="badge">
         <a href="https://github.com/shower/shower">Fork me on GitHub</a>
     </footer>
